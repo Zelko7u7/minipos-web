@@ -1,17 +1,18 @@
-import { useState } from 'react'
-import './App.css'
-//Contenido de la pagina 
+import { useState } from "react";
+import "./App.css";
+
+import MainLayout from "./layouts/MainLayout";
+import CustomersPage from "./pages/CustomersPage";
 import DepartamentsPage from "./pages/DepartamentsPage";
 import TestMenuOptionPage from "./pages/TestMenuOptionPage";
 import About from "./pages/About";
+import LoginPage from "./pages/LoginPage";
+import { storage } from "./utils/storage";
 
-import CustomersPage from './pages/CustomersPage'; "./pages/CustomersPage";
-//Organizador de la interfaz
-import MainLayout from "./layouts/MainLayout";
-//Conenedor del menu
-import SidebarMenu from "./components/SidebarMenu";
 function App() {
   const [page, setPage] = useState("customers");
+  const [isLogged, setIsLogged] = useState(!!storage.getToken());
+
   function renderContent() {
     switch (page) {
       case "customers":
@@ -26,11 +27,18 @@ function App() {
         return <CustomersPage />;
     }
   }
+
+  if (!isLogged) {
+    return <LoginPage onSuccess={() => setIsLogged(true)} />;
+  }
+
   return (
     <MainLayout
-      sidebar={<SidebarMenu current={page} onChange={setPage} />
-      }
-      content={renderContent()} />
-  )
+      current={page}
+      onChange={setPage}
+      content={renderContent()}
+    />
+  );
 }
-export default App
+
+export default App;
